@@ -125,7 +125,7 @@ namespace PatientManagementAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+         
 
             // Configure HTTP request pipeline
        //     if (app.Environment.IsDevelopment())

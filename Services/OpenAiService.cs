@@ -24,7 +24,7 @@ namespace PatientManagementAPI.Services
         {
             //  var patientDetails = await _patientDetailsService.GetPatientDetailsAsync(patientId);
 
-          //  var apiKey = _configuration["OpenAI:ApiKey"];
+            //  var apiKey = _configuration["OpenAI:ApiKey"];
 
 
 
@@ -55,7 +55,14 @@ Patient Data:
 {patientJson}
 """;
 
-            ChatClient chatClient = _client.GetChatClient("gpt-4.1");
+            ChatClient chatClient = null;
+            try { 
+            chatClient = _client.GetChatClient("gpt-4.1");
+            }
+            catch(Exception ex)
+            {
+                return ex.StackTrace;
+            }
 
             ChatCompletion completion =
                 await chatClient.CompleteChatAsync(
