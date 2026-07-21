@@ -55,16 +55,20 @@ namespace PatientManagementAPI
             //    KeyFileStorage codeStorage = new KeyFileStorage();
             //   var code = codeStorage.Read();
 
-            var customKey = Environment.GetEnvironmentVariable("Open__Ccode");
+        
 
             builder.Services.AddScoped<IPatientService, PatientService > ();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
+          /*
+
+            var customKey = Environment.GetEnvironmentVariable("Open__Ccode");
 
             builder.Services.AddSingleton(_ =>
             {
                
                 return new OpenAIClient(customKey);
             });
+            */
 
        //     builder.Services.AddHttpClient<OpenAiService>();
             builder.Services.AddScoped<IOpenAiService, OpenAiService>();

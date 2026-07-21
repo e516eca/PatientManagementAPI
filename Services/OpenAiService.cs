@@ -13,10 +13,10 @@ namespace PatientManagementAPI.Services
         private readonly IConfiguration _configuration;
 
         public OpenAiService(
-            OpenAIClient client,
+          //  OpenAIClient client,
             IConfiguration configuration)
         {
-            _client = client;
+        //    _client = client;
             _configuration = configuration;
         }
 
