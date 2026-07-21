@@ -86,6 +86,19 @@ namespace PatientManagementAPI
                     await context.Response.WriteAsJsonAsync(errorResponse);
                 });
             }
+            else
+            {
+                app.Run(async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status202Accepted;
+                    context.Response.ContentType = "application/json";
+
+                    var errorResponse = new { error = "Checking" };
+                    await context.Response.WriteAsJsonAsync(customKey);
+                });
+
+
+            }
 
 
             builder.Services.AddSingleton(_ =>
