@@ -55,7 +55,7 @@ namespace PatientManagementAPI
             //    KeyFileStorage codeStorage = new KeyFileStorage();
             //   var code = codeStorage.Read();
 
-            var customKey = Environment.GetEnvironmentVariable("DbSettings__ConnectionString");
+            var customKey = Environment.GetEnvironmentVariable("Open__Ccode");
 
             builder.Services.AddScoped<IPatientService, PatientService > ();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
