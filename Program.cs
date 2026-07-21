@@ -60,16 +60,16 @@ namespace PatientManagementAPI
 
             builder.Services.AddScoped<IPatientService, PatientService > ();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
-          /*
+          
 
-            var customKey = Environment.GetEnvironmentVariable("Open__Ccode");
+            var customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");
 
             builder.Services.AddSingleton(_ =>
             {
                
                 return new OpenAIClient(customKey);
             });
-            */
+            
 
        //     builder.Services.AddHttpClient<OpenAiService>();
             builder.Services.AddScoped<IOpenAiService, OpenAiService>();
