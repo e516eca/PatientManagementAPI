@@ -70,14 +70,24 @@ namespace PatientManagementAPI
 
             var customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");
 
+            ArgumentNullException.ThrowIfNull(customKey);
+
             builder.Services.AddSingleton(_ =>
             {
                
                 return new OpenAIClient(customKey);
             });
-            
+           
+            /*
+            builder.Services.AddSingleton(_ =>
+            {
+                var apiKey = builder.Configuration["OpenAI:ApiKey"];
+                return new OpenAIClient(apiKey);
+            });
+           
+            */
 
-       //     builder.Services.AddHttpClient<OpenAiService>();
+            //     builder.Services.AddHttpClient<OpenAiService>();
             builder.Services.AddScoped<IOpenAiService, OpenAiService>();
 
             // Add API services
