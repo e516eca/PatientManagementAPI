@@ -38,24 +38,25 @@ namespace PatientManagementAPI
             .AllowAnyOrigin())
             );*/
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngular", policy =>
-                {
-                    policy.WithOrigins("http://192.168.1.241:7005", "http://127.0.0.1:4200","http://localhost:4200", "https://pzt7znfh-4200.use.devtunnels.ms") // Your Angular URL
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials() // Required if Angular sends cookies/tokens
-                     // Crucial step for the loopback error:
-                          .SetPreflightMaxAge(TimeSpan.FromSeconds(5600));
+            builder.Services.AddCors(options => {
+                options.AddPolicy("AllowAngular", policy => {
+                    policy.WithOrigins(
+                        "http://192.168.1.241:7005",
+                        "http://127.0.0.1:4200",
+                        "http://localhost:4200",
+                        "https://pzt7znfh-4200.use.devtunnels.ms",
+                        "https://agreeable-forest-077c6b40f.7.azurestaticapps.net" // Added Azure Static App origin
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .SetPreflightMaxAge(TimeSpan.FromSeconds(5600));
                 });
-
-              
             });
             //    KeyFileStorage codeStorage = new KeyFileStorage();
             //   var code = codeStorage.Read();
 
-        
+
 
             builder.Services.AddScoped<IPatientService, PatientService > ();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
