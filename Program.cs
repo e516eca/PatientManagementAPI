@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Options;
 using OpenAI;
 using PatientManagementAPI.Models;
@@ -11,6 +12,7 @@ namespace PatientManagementAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var app = builder.Build();
             builder.Configuration.AddEnvironmentVariables();
             // Add Application Insights Telemetry
             builder.Services.AddApplicationInsightsTelemetry(options =>
@@ -68,9 +70,23 @@ namespace PatientManagementAPI
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
           
 
-            var customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");
+            string? customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");
 
-            ArgumentNullException.ThrowIfNull(customKey);
+            // ArgumentNullException.ThrowIfNull(customKey);
+
+            if (string.IsNullOrEmpty(customKey))
+            {
+                // 2. Intercept pipeline and return error to client
+                app.Run(async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "application/json";
+
+                    var errorResponse = new { error = "Configuration error. Required environment variable is missing." };
+                    await context.Response.WriteAsJsonAsync(errorResponse);
+                });
+            }
+
 
             builder.Services.AddSingleton(_ =>
             {
