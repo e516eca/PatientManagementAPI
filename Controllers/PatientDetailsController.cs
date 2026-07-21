@@ -13,11 +13,13 @@ namespace PatientManagementAPI.Controllers
     {
         private readonly  IPatientDetailsService _patientDetailsService;
         private readonly IOpenAiService _openAiService;
+        private readonly ILogger<PatientDetailsController> _logger;
 
-        public PatientDetailsController(IPatientDetailsService patientDetailsService, IOpenAiService openAiService)
+        public PatientDetailsController(IPatientDetailsService patientDetailsService, IOpenAiService openAiService, ILogger<PatientDetailsController> logger)
         {
             _patientDetailsService = patientDetailsService;
             _openAiService = openAiService;
+            _logger = logger;
         }
 
         //  [HttpGet("patientDetail")]
@@ -32,6 +34,8 @@ namespace PatientManagementAPI.Controllers
                 { "birthdate", patientParameters.BirthDate }
             };
             */
+
+          
             var patientDetails = await _patientDetailsService.GetPatientDetailsAsync(patientId);
 
             return Ok(patientDetails);
@@ -49,12 +53,22 @@ namespace PatientManagementAPI.Controllers
             };
             */
             var patientDetails = await _patientDetailsService.GetPatientDetailsAsync(patientId);
-            
 
-            var patientSummary = await _openAiService.GeneratePatientSummaryAsync(patientDetails);
-            var responseObj = new { patientSummary = patientSummary };
+         
+            try
+            {
+                _logger.LogInformation("Getting Patient Summary for patient {patientId}", patientId);
+                var patientSummary = await _openAiService.GeneratePatientSummaryAsync(patientDetails);
+                _logger.LogInformation("Done Getting Patient Summary for patient {patientId}", patientId);
+                var responseObj = new { patientSummary = patientSummary };
+                return Ok(responseObj);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching product {ProductId}", patientId);
+                return StatusCode(500, "Internal server error");
+            }
 
-            return Ok(responseObj);
         }
 
     }

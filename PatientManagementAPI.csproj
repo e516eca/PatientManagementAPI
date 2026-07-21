@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hl7.Fhir.R4" Version="6.3.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
     <PackageReference Include="OpenAI" Version="2.12.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />

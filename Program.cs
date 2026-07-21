@@ -12,6 +12,12 @@ namespace PatientManagementAPI
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddEnvironmentVariables();
+            // Add Application Insights Telemetry
+            builder.Services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ConnectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
+            });
+
             /*
             // Configure FHIR Server options with validation
             builder.Services
