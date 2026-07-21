@@ -82,7 +82,7 @@ namespace PatientManagementAPI
         //    {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-         //   }
+         //   } 
 
             //   app.UseCors("AllowAll");
             app.UseCors("AllowAngular");
