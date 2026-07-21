@@ -24,7 +24,9 @@ namespace PatientManagementAPI.Services
         {
             //  var patientDetails = await _patientDetailsService.GetPatientDetailsAsync(patientId);
 
-            var apiKey = _configuration["OpenAI:ApiKey"];
+          //  var apiKey = _configuration["OpenAI:ApiKey"];
+
+
 
             string patientJson = JsonSerializer.Serialize(
                 patient,

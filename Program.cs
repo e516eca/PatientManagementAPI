@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using OpenAI;
+using PatientManagementAPI.Models;
 using PatientManagementAPI.Options;
 using PatientManagementAPI.Services;
 
@@ -10,6 +11,7 @@ namespace PatientManagementAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddEnvironmentVariables();
             /*
             // Configure FHIR Server options with validation
             builder.Services
@@ -40,20 +42,28 @@ namespace PatientManagementAPI
             {
                 options.AddPolicy("AllowAngular", policy =>
                 {
-                    policy.WithOrigins("http://192.168.1.241:7005") // Your Angular URL
+                    policy.WithOrigins("http://192.168.1.241:7005", "http://127.0.0.1:4200","http://localhost:4200", "https://pzt7znfh-4200.use.devtunnels.ms") // Your Angular URL
                           .AllowAnyHeader()
                           .AllowAnyMethod()
-                          .AllowCredentials(); // Required if Angular sends cookies/tokens
+                          .AllowCredentials() // Required if Angular sends cookies/tokens
+                     // Crucial step for the loopback error:
+                          .SetPreflightMaxAge(TimeSpan.FromSeconds(5600));
                 });
+
+              
             });
+            //    KeyFileStorage codeStorage = new KeyFileStorage();
+            //   var code = codeStorage.Read();
+
+            var customKey = Environment.GetEnvironmentVariable("DbSettings__ConnectionString");
 
             builder.Services.AddScoped<IPatientService, PatientService > ();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
 
             builder.Services.AddSingleton(_ =>
             {
-                var apiKey = builder.Configuration["OpenAI:ApiKey"];
-                return new OpenAIClient(apiKey);
+               
+                return new OpenAIClient(customKey);
             });
 
        //     builder.Services.AddHttpClient<OpenAiService>();
