@@ -51,18 +51,21 @@ namespace PatientManagementAPI
             builder.Services.AddScoped<IPatientService, PatientService>();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
 
-           
-            string? customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");            
 
+            // 1. Use builder.Configuration to fetch the key safely across all environments
+            string? customKey = builder.Configuration["OpenAI:ApiKey"];
+
+            // 2. Fail fast with a clear exception message if the key is missing
+            if (string.IsNullOrEmpty(customKey))
+            {
+                throw new InvalidOperationException("OpenAI:ApiKey configuration is missing or null.");
+            }
 
             builder.Services.AddSingleton(_ =>
             {
-
                 return new OpenAIClient(customKey);
             });
 
-         
-          
 
             //     builder.Services.AddHttpClient<OpenAiService>();
             builder.Services.AddScoped<IOpenAiService, OpenAiService>();
