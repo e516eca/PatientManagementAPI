@@ -12,7 +12,7 @@ namespace PatientManagementAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var app = builder.Build();
+     
             builder.Configuration.AddEnvironmentVariables();
             // Add Application Insights Telemetry
             builder.Services.AddApplicationInsightsTelemetry(options =>
@@ -20,31 +20,7 @@ namespace PatientManagementAPI
                 options.ConnectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
             });
 
-            /*
-            // Configure FHIR Server options with validation
-            builder.Services
-                .AddOptions<FhirServerOptions>()
-                .Bind(builder.Configuration.GetSection(FhirServerOptions.SectionName))
-                .Validate(
-                    options => Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var uri)
-                               && uri.Scheme == Uri.UriSchemeHttps,
-                    "FhirServer:BaseUrl must be an absolute HTTPS URL.")
-                .Validate(
-                    options => !string.IsNullOrWhiteSpace(options.BearerToken),
-                    "FhirServer:BearerToken is required.")
-                .Validate(
-                    options => options.TimeoutSeconds is >= 5 and <= 300,
-                    "FhirServer:TimeoutSeconds must be between 5 and 300.")
-                .ValidateOnStart();
-            */
-
-            // Add services to the container.
-            /*
-            builder.Services.AddCors(opt => opt.AddPolicy("AllowAll",
-            opt => opt.AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin())
-            );*/
+          
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowAngular", policy => {
@@ -64,16 +40,63 @@ namespace PatientManagementAPI
             //    KeyFileStorage codeStorage = new KeyFileStorage();
             //   var code = codeStorage.Read();
 
+            /*
+            builder.Services.AddSingleton(_ =>
+            {
+                var apiKey = builder.Configuration["OpenAI:ApiKey"];
+                return new OpenAIClient(apiKey);
+            });
+            */
 
-
-            builder.Services.AddScoped<IPatientService, PatientService > ();
+            builder.Services.AddScoped<IPatientService, PatientService>();
             builder.Services.AddScoped<IPatientDetailsService, PatientDetailsService>();
+
+           
+            string? customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");            
+
+
+            builder.Services.AddSingleton(_ =>
+            {
+
+                return new OpenAIClient(customKey);
+            });
+
+         
           
 
-            string? customKey = Environment.GetEnvironmentVariable("OpenAI__ApiKey");
+            //     builder.Services.AddHttpClient<OpenAiService>();
+            builder.Services.AddScoped<IOpenAiService, OpenAiService>();
 
-            // ArgumentNullException.ThrowIfNull(customKey);
+            // Add API services
+            builder.Services.AddControllers();
+            builder.Services.AddOpenApi();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            
+            
 
+            var app = builder.Build();
+
+            builder.Services.AddControllers();
+            app.Logger.LogInformation("customKey:", customKey);
+
+
+            // Configure HTTP request pipeline
+            //     if (app.Environment.IsDevelopment())
+            //    {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            //   } 
+
+            //   app.UseCors("AllowAll");
+            app.UseCors("AllowAngular");
+            //   app.UseHttpsRedirection();
+            // app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            /*
             if (string.IsNullOrEmpty(customKey))
             {
                 // 2. Intercept pipeline and return error to client
@@ -99,49 +122,8 @@ namespace PatientManagementAPI
 
 
             }
-
-
-            builder.Services.AddSingleton(_ =>
-            {
-               
-                return new OpenAIClient(customKey);
-            });
-           
-            /*
-            builder.Services.AddSingleton(_ =>
-            {
-                var apiKey = builder.Configuration["OpenAI:ApiKey"];
-                return new OpenAIClient(apiKey);
-            });
-           
             */
 
-            //     builder.Services.AddHttpClient<OpenAiService>();
-            builder.Services.AddScoped<IOpenAiService, OpenAiService>();
-
-            // Add API services
-            builder.Services.AddControllers();
-            builder.Services.AddOpenApi();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-         
-
-            // Configure HTTP request pipeline
-       //     if (app.Environment.IsDevelopment())
-        //    {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-         //   } 
-
-            //   app.UseCors("AllowAll");
-            app.UseCors("AllowAngular");
-         //   app.UseHttpsRedirection();
-           // app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.MapControllers();
-         
             app.Run();
         }
     }
