@@ -127,7 +127,7 @@ namespace PatientManagementAPI
             }
             */
 
-            app.Run();
+          //  app.Run();
         }
     }
 }
